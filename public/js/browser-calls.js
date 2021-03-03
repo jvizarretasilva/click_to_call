@@ -5,8 +5,6 @@
 
 // Store some selectors for elements we'll reuse
 var callStatus = $("#call-status");
-var answerButton = $(".answer-button");
-var callSupportButton = $(".call-support-button");
 var hangUpButton = $(".hangup-button");
 var callCustomerButtons = $(".call-customer-button");
 
@@ -52,13 +50,11 @@ $(document).ready(function() {
         console.log("Successfully established call!");
         hangUpButton.prop("disabled", false);
         callCustomerButtons.prop("disabled", true);
-        callSupportButton.prop("disabled", true);
-        answerButton.prop("disabled", true);
 
         // If phoneNumber is part of the connection, this is a call from a
         // support agent to a customer's phone
         if ("phoneNumber" in conn.message) {
-          updateCallStatus("In call with " + conn.message.phoneNumber);
+          updateCallStatus("En llamada con " + conn.message.phoneNumber);
         } else {
           // This is a call from a website user to a support agent
           updateCallStatus("In call with support");
@@ -69,24 +65,13 @@ $(document).ready(function() {
         // Disable the hangup button and enable the call buttons
         hangUpButton.prop("disabled", true);
         callCustomerButtons.prop("disabled", false);
-        callSupportButton.prop("disabled", false);
 
         updateCallStatus("Ready");
       });
 
       device.on("incoming", function(conn) {
-        updateCallStatus("Incoming support call");
+        updateCallStatus("Llamando...");
 
-        // Set a callback to be executed when the connection is accepted
-        conn.accept(function() {
-          updateCallStatus("In call with customer");
-        });
-
-        // Set a callback on the answer button and enable it
-        answerButton.click(function() {
-          conn.accept();
-        });
-        answerButton.prop("disabled", false);
       });
 
     })
@@ -100,7 +85,7 @@ $(document).ready(function() {
 
 /* Call a customer from a support ticket */
 function callCustomer(phoneNumber) {
-  updateCallStatus("Calling " + phoneNumber + "...");
+  updateCallStatus("Llamando a " + phoneNumber + "...");
 
   var params = {"phoneNumber": phoneNumber};
   device.connect(params);
@@ -119,48 +104,3 @@ function hangUp() {
   device.disconnectAll();
 }
 
-function initNewTicketForm() {
-  var formEl = $(".new-ticket");
-  var buttonEl = formEl.find(".btn.btn-primary");
-
-  // button handler
-  formEl.find("[type='button']").click(function(e) {
-    $.ajax({
-        url: '/tickets/new',
-        type: 'post',
-        data: formEl.serialize()
-    })
-    .done(function(){
-      showNotification("Support ticket was created successfully.", "success")
-      // clear form
-      formEl.find("input[type=text], textarea").val("");
-    })
-    .fail(function(res) {
-      showNotification("Support ticket request failed. " + res.responseText, "danger")
-    });
-  });
-}
-
-function showNotification(text, style) {
-  var alertStyle = "alert-"+style;
-  var alertEl = $(".alert.ticket-support-notifications");
-
-  if (alertEl.length == 0) {
-    alertEl = $("<div class=\"alert ticket-support-notifications\"></div>");
-    $("body").before(alertEl);
-  }
-
-  alertEl.removeClass (function (index, css) {
-    return (css.match (/(^|\s)alert-\S+/g) || []).join(' ');
-  });
-
-  alertEl.addClass(alertStyle);
-  alertEl.html(text);
-
-  setTimeout(clearNotifications, 4000)
-}
-
-function clearNotifications() {
-  var alertEl = $(".alert.ticket-support-notifications");
-  alertEl.remove();
-}
