@@ -7,9 +7,11 @@ const config = require('../config');
 
 // POST /calls/connect
 router.post('/connect', twilio.webhook({validate: false}), function(req, res, next) {
-  var phoneNumber = req.body.phoneNumber;
+  var phoneNumber = '+51 990 604 285';
   var callerId = config.twilioPhoneNumber;
   var twiml = new VoiceResponse();
+
+  twiml.say('Hello welcome to this app for B C P. Have fun!')
 
   var dial = twiml.dial({callerId : callerId});
   if (phoneNumber) {
