@@ -11,8 +11,6 @@ var bodyParser = require('body-parser');
 
 var home = require('./routes/home');
 var call = require('./routes/call');
-var dashboard = require('./routes/dashboard');
-var tickets = require('./routes/tickets');
 var token = require('./routes/token');
 
 var app = express();
@@ -47,8 +45,6 @@ app.use(function(req, res, next){
 app.use('/', home);
 app.use('/home', home);
 app.use('/call', call);
-app.use('/dashboard', dashboard);
-app.use('/tickets', tickets);
 app.use('/token', token);
 
 // catch 404 and forward to error handler
