@@ -7,7 +7,6 @@
 var app = require('../app');
 var debug = require('debug')('test-app:server');
 var http = require('http');
-var mongoose = require('mongoose');
 
 /**
  * Get port from environment and store in Express.
@@ -82,10 +81,6 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-var mongoConnection = process.env.DOCKER_MONGO || "localhost"
-
-mongoose.connect('mongodb://'+mongoConnection+'/browser-calls', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.Promise = Promise;
 
 
 /**
